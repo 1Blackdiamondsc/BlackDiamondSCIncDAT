@@ -918,63 +918,46 @@ contract ERC721Full is ERC721, ERC721Enumerable, ERC721Metadata {
     }
 }
 
-// File: contracts/digitalAssetTokenization/DigitalAssetTokenization.sol
+// File: contracts/blackdiamondscincdat/BlackDiamondSCIncDAT.sol
 
 pragma solidity ^0.5.0;
 
 
 
-
-/*
-<디지털 자산 토큰화 스마트 컨트랙트 진행 프로세스>
-1. 컨트랙트 배포(ERC-721 토큰 생성 : 토큰명, 심볼명, 총 발행량)
-2. 토큰 정보 설정 (가격, 자산명, 공증번호)
-3. 토큰 현재 가격 업데이트 (업데이트 이력 저장)
-4. 타 계정 주소에 토큰 전송 (소유자 변경)
-5. 투표 등록 (자산 판매에 대한 투표)
-6. 투표 시작
-
-
 contract DigitalAssetTokenization is ERC721Full, Ownable {
     using SafeMath for uint256;
 
-    /// @dev asset 구조체
+    /// @dev asset
     struct Asset {
-        uint createdDate; //asset 생성날짜
-        bytes32 ownerName; //asset 소유자명
+        uint createdDate; //asset
+        bytes32 ownerName; //asset
     }
 
-    /// @dev asset 공통정보 구조체
+    /// @dev asset
     struct AssetCommonInfo {
         PriceHistory[] priceHistory; //asset
         string assetName;
         string notarizedNumber;
     }
 
-    /// @dev asset 가격이력 구조체
+    /// @dev asset
     struct PriceHistory {
-        uint256 price; //가격
-        uint updateDate; //가격 업데이트 날짜
+        uint256 price; //
+        uint updateDate; //
     }
 
-    /// @dev asset 구매정보 구조체
+    /// @dev asset
     struct BuyAssetInfo {
-        uint256 depositAmount; //입금 수량
-        address addr; //구매자 주소
+        uint256 depositAmount; //
+        address addr; //
     }
 
-    /// @dev 투표정보 구조체
+    /// @dev
     struct VoteInfo {
-        uint startDate; //투표 시작날짜
-        uint endDate; //투표 종료날짜
-        string title; //투표 제목
-        bool isUsing; //투표중인지 확인하는 flag
-    }
-
-    /// @dev 투표 type
-    enum VoteType {
-        agree, //찬성
-        disagree //반대
+        uint startDate; //
+        uint endDate; //
+        string title; //
+        bool isUsing; //
     }
 
     Asset[] public assets;
@@ -989,57 +972,57 @@ contract DigitalAssetTokenization is ERC721Full, Ownable {
     uint8 public voteResult;
     uint private numVoted;
 
-    /// @dev asset 소유자인 경우에만 function을 실행할 수 있습니다.
-    /// @param _tokenId 토큰ID
+    /// @dev asset
+    /// @param _tokenId
     modifier onlyAssetOwner(uint _tokenId) {
         require(ownerOf(_tokenId) == msg.sender, "The address is not a owner of token.");
         _;
     }
 
-    /// @dev 투표가 생성된 경우에만 function을 실행할 수 있습니다.
+    /// @dev
     modifier isUsingVote() {
         require(voteInfo.isUsing == true, "Vote is not created.");
         _;
     }
 
-    /// @dev 투표 유무 확인
+    /// @dev
     modifier checkVote() {
         require(isVoted[msg.sender] == false, "This voter already voted.");
         _;
     }
 
-    /// @dev 투표 기간을 확인 합니다.
+    /// @dev.
     modifier checkVotingDate() {
         require(voteInfo.startDate <= now && voteInfo.endDate >= now, "invalid voting period");
         _;
     }
 
-    /// @dev 해당 계정의 asset 토큰 수량을 확인 합니다.
+    /// @dev 해당 계정의 asset.
     modifier checkBalance() {
         require(balanceOf(msg.sender) > 0, "invalid balance");
         _;
     }
 
-    /// @dev 투표 type을 확인 합니다.
-    /// @param _vote 찬성 또는 반대
+    /// @dev
+    /// @param _vote
     modifier checkVoteType(uint _vote) {
         require(VoteType.agree == VoteType(_vote) || VoteType.disagree == VoteType(_vote), "invalid vote type");
         _;
     }
 
-    /// @dev 입금 금액을 확인 합니다.
+    /// @dev
     modifier checkDepositAmount() {
         uint lastIndex = assetCommonInfo.priceHistory.length.sub(1);
         require(msg.value == assetCommonInfo.priceHistory[lastIndex].price, "invalid deposit amount");
         _;
     }
 
-    /// @dev 컨트랙트가 배포되면서 asset 토큰 생성 (ERC-721)
-    /// @param _name 토큰명
-    /// @param _symbol 심볼명
-    /// @param _totalSupply 토큰 발행 수량
-    /// @param _ownerName 소유자명
-    /// 생성자
+    /// @dev (ERC-721)
+    /// @param _name
+    /// @param _symbol 
+    /// @param _totalSupply
+    /// @param _ownerName
+    /// 
     constructor(
         string memory _name,
         string memory _symbol,
@@ -1054,10 +1037,10 @@ contract DigitalAssetTokenization is ERC721Full, Ownable {
         }
     }
 
-    /// @dev asset 공통 정보 설정하는 기능
-    /// @param _price asset 가격
-    /// @param _assetName 자산명
-    /// @param _notarizedNumber 공증번호
+    /// @dev asset
+    /// @param _price asset
+    /// @param _assetName
+    /// @param _notarizedNumber
     function setAssetCommonInfo(
         uint256 _price,
         string calldata _assetName,
@@ -1071,22 +1054,22 @@ contract DigitalAssetTokenization is ERC721Full, Ownable {
         assetCommonInfo.notarizedNumber = _notarizedNumber;
     }
 
-    /// @dev 토큰 가격 설정 기능
-    /// @param _price 토큰 가격
+    /// @dev
+    /// @param _price
     function setAssetPrice(uint _price) external onlyOwner {
         require(buyAssetInfo.depositAmount == 0, "");
 
         assetCommonInfo.priceHistory.push(PriceHistory(_price, now));
     }
 
-    /// @dev 토큰 소유자명 설정 기능
-    /// @param _tokenId 토큰ID
-    /// @param _ownerName owner 이름
+    /// @dev
+    /// @param _tokenId
+    /// @param _ownerName owner
     function setAssetOwnerName(uint _tokenId, bytes32 _ownerName) external onlyAssetOwner(_tokenId) {
         assets[_tokenId].ownerName = _ownerName;
     }
 
-    /// @dev asset 구매 기능
+    /// @dev asset
     function buyAsset() external payable checkDepositAmount() {
         require(voteResult == uint8(VoteType.agree), "");
 
@@ -1094,9 +1077,9 @@ contract DigitalAssetTokenization is ERC721Full, Ownable {
         buyAssetInfo.addr = msg.sender;
     }
 
-    /// @dev asset 처분 하는 기능
-    /// @param _tokenId 토큰ID
-    /// 소유중인 토큰을 컨트랙트에 전송하고 이더를 받음
+    /// @dev asset
+    /// @param _tokenId
+    /// 
     function exitAsset(uint _tokenId) external {
         _transferFrom(msg.sender, address(this), _tokenId);
 
@@ -1106,17 +1089,17 @@ contract DigitalAssetTokenization is ERC721Full, Ownable {
         msg.sender.transfer(dividedPrice);
     }
 
-    /// @dev asset 판매에 대한 찬반 투표 생성 기능
-    /// @param _startDate 투표 시작날짜
-    /// @param _endDate 투표 종료날짜
-    /// @param _title 투표 제목
+    /// @dev asset
+    /// @param _startDate
+    /// @param _endDate
+    /// @param _title
     function createVote(uint _startDate, uint _endDate, string calldata _title) external {
         require(_startDate >= now && _endDate > _startDate, "invalid vote date");
         voteInfo = VoteInfo(_startDate, _endDate, _title, true);
     }
 
-    /// @dev asset 판매에 대한 찬반 투표 기능
-    /// @param _vote 찬성 또는 반대
+    /// @dev asset
+    /// @param _vote
     function vote(uint _vote) external
         checkVote() checkVotingDate() checkBalance() checkVoteType(_vote) {
 
@@ -1125,7 +1108,7 @@ contract DigitalAssetTokenization is ERC721Full, Ownable {
         isVoted[msg.sender] = true;
         numVoted = numVoted.add(1);
 
-        //찬성 또는 반대가 과반수 동의 되었는지 확인
+        //
         if (totalSupply().div(2) < votedCounter[_vote]) {
             if (VoteType(_vote) == VoteType.agree) {
                 voteResult = uint8(VoteType.agree);
@@ -1135,16 +1118,16 @@ contract DigitalAssetTokenization is ERC721Full, Ownable {
         }
     }
 
-    /// @dev 투표 결과 가져오는 기능
+    /// @dev
     function getVoteResult() external view returns (uint) {
         return voteResult;
     }
 
-    /// @dev 투표 결과 가져오는 기능
-    /// @return 총 토큰수
-    /// @return 총 투표수
-    /// @return 찬성
-    /// @return 반대
+    /// @dev
+    /// @return
+    /// @return
+    /// @return
+    /// @return
     function getVote() external view returns (uint, uint, uint, uint) {
         return (
             totalSupply(),
@@ -1154,9 +1137,9 @@ contract DigitalAssetTokenization is ERC721Full, Ownable {
             );
     }
 
-    /// @dev 토큰 현재 가격 정보 가져오는 기능
-    /// @return 토큰 가격
-    /// @return 업데이트 날짜
+    /// @dev
+    /// @return 
+    /// @return 
     function getAssetPrice() external view returns(uint, uint) {
         uint lastIndex = assetCommonInfo.priceHistory.length.sub(1);
         return (
