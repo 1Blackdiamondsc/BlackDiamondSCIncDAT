@@ -918,7 +918,7 @@ contract ERC721Full is ERC721, ERC721Enumerable, ERC721Metadata {
     }
 }
 
-// File: contracts/digitalAssetTokenization/DigitalAssetTokenization.sol
+// File: contracts/blackdiamondscincDAT/BlackDiamondSCIncDAT.sol
 
 pragma solidity ^0.5.0;
 
@@ -938,7 +938,7 @@ pragma solidity ^0.5.0;
 */
 
 
-contract DigitalAssetTokenization is ERC721Full, Ownable {
+contract BlackDiamondSCIncDAT is ERC721Full, Ownable {
     using SafeMath for uint256;
  
 // @dev asset structure
