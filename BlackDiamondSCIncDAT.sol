@@ -294,11 +294,6 @@ contract ERC165 is IERC165 {
 
 pragma solidity ^0.5.0;
 
-
-
-
-
-
 /**
  * @title ERC721 Non-Fungible Token Standard basic implementation
  * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
@@ -581,7 +576,6 @@ contract ERC721 is ERC165, IERC721 {
 
 pragma solidity ^0.5.0;
 
-
 /**
  * @title ERC-721 Non-Fungible Token Standard, optional enumeration extension
  * @dev See https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
@@ -596,9 +590,6 @@ contract IERC721Enumerable is IERC721 {
 // File: openzeppelin-solidity/contracts/token/ERC721/ERC721Enumerable.sol
 
 pragma solidity ^0.5.0;
-
-
-
 
 /**
  * @title ERC-721 Non-Fungible Token with optional enumeration extension logic
@@ -797,7 +788,6 @@ contract ERC721Enumerable is ERC165, ERC721, IERC721Enumerable {
 
 pragma solidity ^0.5.0;
 
-
 /**
  * @title ERC-721 Non-Fungible Token Standard, optional metadata extension
  * @dev See https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
@@ -811,9 +801,6 @@ contract IERC721Metadata is IERC721 {
 // File: openzeppelin-solidity/contracts/token/ERC721/ERC721Metadata.sol
 
 pragma solidity ^0.5.0;
-
-
-
 
 contract ERC721Metadata is ERC165, ERC721, IERC721Metadata {
     // Token name
@@ -902,9 +889,6 @@ contract ERC721Metadata is ERC165, ERC721, IERC721Metadata {
 
 pragma solidity ^0.5.0;
 
-
-
-
 /**
  * @title Full ERC721 Token
  * This implementation includes all the required and some optional functionality of the ERC721 standard
@@ -920,8 +904,6 @@ contract ERC721Full is ERC721, ERC721Enumerable, ERC721Metadata {
 // File: contracts/blackdiamondscincdat/BlackDiamondSCIncDAT.sol
 
 pragma solidity ^0.5.0;
-
-
 
 contract DigitalAssetTokenization is ERC721Full, Ownable {
     using SafeMath for uint256;
