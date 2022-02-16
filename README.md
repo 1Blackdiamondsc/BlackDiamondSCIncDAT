@@ -3,6 +3,6 @@
 # BlackDiamond SC Inc Decentralized Asset Tokenization Dapp
 
 Installation:
-# $ npm install truffle
-
 # $ npm install ganache global
+
+# $ npm install truffle unbox react
